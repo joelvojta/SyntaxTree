@@ -1,11 +1,14 @@
-public class Parser 
+public class Parser
 {
 	private String theStmt;
 	private int pos; //where am I in the theStmt string
-
+	private static final String legalVariableCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "; 
+	private static final String legalOpCharacters = "+-*/% ";
+	
 	public Parser(String theStmt)
 	{
 		this.theStmt = theStmt;
+		
 		this.pos = 0;
 	}
 	
@@ -14,71 +17,107 @@ public class Parser
 		this.parse_stmt();
 	}
 	
+	private String getNextToken(char c)
+	{
+		while(pos < this.theStmt.length())
+		{
+			if(this.theStmt.charAt(pos) == c)
+			{
+				pos++;
+				break;
+			}
+			pos++;
+		}
+		return "" + c;
+	}
+	
+	private String getNextToken(String legalChars)
+	{
+		String token = "";
+		while(pos < this.theStmt.length())
+		{
+			if(legalChars.indexOf(this.theStmt.charAt(pos)) != -1)
+			{
+				token += this.theStmt.charAt(pos);
+			}
+			else
+			{
+				//this means we are at the end of the token
+				//We are always trimming leading and trailing spaces
+				//move forward one
+				break;
+			}
+			pos++;
+		}
+		return token.trim();
+	}
+	
 	private void parse_stmt()
 	{
-		theStmt = theStmt.replaceAll("\\s","");  //this will take away all the empty spaces, making it easier to navigate
-		String theVar = ""; //the first variable
-		
-		for (int i = this.pos; i < theStmt.indexOf("="); i++)  //in case the variable has multiple characters
-		{
-			theVar = theVar + theStmt.charAt(pos);
-			pos++;
-		}
-		pos++;
-		System.out.println("Read: Varname = " + theVar);
-		String mathExpr = theStmt.substring(pos);   //finds the expression and makes it into string
-		System.out.println("Reading Math Expr: " + mathExpr);
-		parse_math_expr();
-		}
-	
 		//Print each time it reads something like:
 		// Read: VarName = a
+		String varName = this.getNextToken(Parser.legalVariableCharacters);
+		System.out.println("Read VarName: " + varName);
+		VarExpression FirstVarExp = new VarExpression(varName);  //create variable that contains the varName
+		
+		
+		//burn past the =
+		this.getNextToken('=');
+		System.out.println("Burned =");
+		
 		// Reading: Math-Expr
+		MathExpression FirstMathExp = this.parse_math_expr();  //parse the first math expression and save it
 		
-		//read a var name
-		//read a math_expr
+		
+		//burn past the ;
+		this.getNextToken(';');
+		System.out.println("Burned ;");
+		
+		//Build VarDefStatement here!!!!
+		VarDefStatement FirstVarDefStmt = new VarDefStatement(FirstVarExp, FirstMathExp);	//the FirstVarDefStmt will contain the variables FirstVarExp and FirstMathExp
+		System.out.println(FirstVarDefStmt);
+	}
 	
-	private void parse_math_expr()
+	private MathExpression parse_math_expr()  //we have to find three parts in this method:  The left, the right, and the middle
 	{
-		String inside = "";  //create a string for expressions within ()
-		String theLeft = "";
-		String theRight = "";
+		String varName = this.getNextToken(Parser.legalVariableCharacters);
+		Expression rightOperand = null; //start them off empty
+		Expression leftOperand = null;
 		
-		//THIS IS THE PART WHERE THINGS MESS UP FOR ME
-		if(theStmt.indexOf("(") == pos) //is there another math expression here?
+		if(varName.length() == 0)
 		{
-			for(int i = pos + 1; i < theStmt.indexOf(")"); i++) //only pay attention to what's inside the ()
-			{
-				inside = inside + theStmt.charAt(i); //create the inside expression string
-				System.out.println(inside);  
-				pos++;  
-				parse_math_expr(); //restart loop with string inside
-			}
+			//we know that we are at the beginning of a paren-math-expr
+			this.getNextToken('(');
+			System.out.println("Burned (");
+			this.parse_math_expr();
+			this.getNextToken(')');
+			System.out.println("Burned )");
 		}
+		else
+		{
+			System.out.println("Read VarName: " + varName);
+			leftOperand = new VarExpression(varName);  //fill in leftOperand variable
+			
+		}
+		String op = this.getNextToken(Parser.legalOpCharacters);
+		System.out.println("Read Op: " + op);
+		OpExpression Op = new OpExpression(op);  //fill Op with the operator we found
 		
-		//THIS PART SEEMS TO WORK OK, FOR THE MOST PART
-		else 
+		varName = this.getNextToken(Parser.legalVariableCharacters);
+		if(varName.length() == 0)
 		{
-			//theLeft variable is everything up to the next operator
-			for (int i = this.pos; i < theStmt.indexOf("*") || i < theStmt.indexOf("/") || i < theStmt.indexOf("+") || i < theStmt.indexOf("-") || i < theStmt.indexOf("%");  i++)  
-			{
-				theLeft = theLeft + theStmt.charAt(pos);
-				pos++;
-			}
-			System.out.println("Reading Left: " + theLeft);
-			System.out.println("Reading Operator: " + theStmt.charAt(pos));
-			pos++;
-			//the right variable ends before the ) or the ;
-			for (int i = this.pos; i < theStmt.indexOf(")") || i < theStmt.indexOf(";");  i++)  
-			{
-				theRight = theRight + theStmt.charAt(pos);
-				pos++;
-			}
-			System.out.println("Reading Right: " + theRight);
+			//we know that we are at the beginning of a paren-math-expr
+			this.getNextToken('(');
+			System.out.println("Burned (");
+			this.parse_math_expr();
+			this.getNextToken(')');
+			System.out.println("Burned )");
 		}
+		else
+		{
+			System.out.println("Read VarName: " + varName);
+			rightOperand = new VarExpression(varName);	//fill in rightOperand with what we found
+		}
+		return new MathExpression(leftOperand, rightOperand, Op);  //our MathExpression contains the leftOperand, rightOperand, and op
 	}
 }
-
-
-
-	
