@@ -1,10 +1,18 @@
 
+
 public class VarExpression extends Expression
 {
 	private String varName;
 	
-	public VarExpression(String varName)  //VarExpression is pretty simple
+	public VarExpression(String varName)
 	{
 		this.varName = varName;
 	}
+	
+	public String toString()
+	{
+		return varName;
+	}
+	
+	//public 
 }

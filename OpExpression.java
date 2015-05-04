@@ -1,9 +1,16 @@
-public class OpExpression extends Expression 
+
+public class OpExpression 
 {
-	private String theOp;
+	private char theOp;
 	
-	public OpExpression(String theOp)
+	public OpExpression(char theOp)
 	{
 		this.theOp = theOp;
 	}
+	
+	public String toString()
+	{
+		return "" + theOp;
+	}
+	
 }
