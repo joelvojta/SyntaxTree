@@ -1,6 +1,6 @@
 public class MathExpression extends Expression
 {
-	private Expression leftOperand;  //MathExpression will contain the left, right, and operator
+	private Expression leftOperand;
 	private Expression rightOperand;
 	private OpExpression operator;
 	
@@ -11,20 +11,75 @@ public class MathExpression extends Expression
 		this.operator = operator;
 	}
 	
+	public int doMath()
+	{
+		int theLeftNum;
+		int theRightNum;
+		if(this.leftOperand instanceof VarExpression)
+		{
+			Variable Va = this.leftOperand
+			
+			
+			
+			
+			//create a new variable
+			//hw crap here
+			theLeftNum = -1;
+		}
+		else if(this.leftOperand instanceof LitExpression)
+		{
+			theLeftNum = ((LitExpression) this.leftOperand).getTheLiteral();
+		} 
+		else
+		{
+			theLeftNum = ((MathExpression)this.leftOperand).doMath();
+		}
+		
+		if(this.rightOperand instanceof VarExpression)
+		{
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			//hw crap here
+			theRightNum = -1;
+		}
+		else if(this.rightOperand instanceof LitExpression)
+		{
+			theRightNum = ((LitExpression) this.rightOperand).getTheLiteral();
+		} 
+		else
+		{
+			theRightNum = ((MathExpression)this.rightOperand).doMath();
+		}
+		return this.operator.applyOperator(theLeftNum, theRightNum);
+	}
+	
 	public String toString()
 	{
-		if(leftOperand instanceof MathExpression && rightOperand instanceof MathExpression) //if both sides are a math expression, put parenthesis around both of them
+		String result = "";
+		if(this.leftOperand instanceof MathExpression)
 		{
-			return "(" + leftOperand.toString() + ")" + operator.toString() + "(" + rightOperand.toString() + ")";    
+			result += "(" + this.leftOperand.toString() + ")";
 		}
-		if(leftOperand instanceof MathExpression) //if the left is a math expression, put a parenthesis around that and continue
+		else
 		{
-			return "(" + leftOperand.toString() + ")" + operator.toString() + rightOperand.toString();
+			result += this.leftOperand.toString();
 		}
-		if(rightOperand instanceof MathExpression) //if the right is a math expression, put a parenthesis around that and continue
+		result += this.operator.toString();
+		if(this.rightOperand instanceof MathExpression)
 		{
-			return leftOperand.toString() + operator.toString() + "(" + rightOperand.toString() + ")";
+			result += "(" + this.rightOperand.toString() + ")";
 		}
-		return leftOperand.toString() + operator.toString()+ rightOperand.toString();  //if the statement is normal, print it out normally
+		else
+		{
+			result += this.rightOperand.toString();
+		}
+		return result;
 	}
 }

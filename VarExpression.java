@@ -13,6 +13,4 @@ public class VarExpression extends Expression
 	{
 		return varName;
 	}
-	
-	//public 
 }

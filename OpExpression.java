@@ -10,7 +10,30 @@ public class OpExpression
 	
 	public String toString()
 	{
-		return "" + theOp;
+		return "" + this.theOp;
 	}
 	
+	public int applyOperator(int leftNum, int rightNum)
+	{
+		if(this.theOp == '+')
+		{
+			return leftNum + rightNum;
+		}
+		else if(this.theOp == '-')
+		{
+			return leftNum - rightNum;
+		}
+		else if(this.theOp == '*')
+		{
+			return leftNum * rightNum;
+		}
+		else if(this.theOp == '%')
+		{
+			return leftNum % rightNum;
+		}
+		else
+		{
+			return leftNum / rightNum;
+		}
+	}
 }
