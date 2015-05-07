@@ -1,4 +1,5 @@
 
+
 public class VarDefStatement extends Object
 {
 	private VarExpression theVarExpr;
@@ -10,6 +11,18 @@ public class VarDefStatement extends Object
 		this.theMathExpr = theMathExpr;
 	}
 	
+	public VarExpression getTheVarExpr() {
+		return theVarExpr;
+	}
+
+	public MathExpression getTheMathExpr() {
+		return theMathExpr;
+	}
+
+	public boolean isSpecialMathExpr()
+	{
+		return this.theMathExpr.isSpecial();
+	}
 	public String toString()
 	{
 		return this.theVarExpr.toString() + " = " + this.theMathExpr.toString() + ";";

@@ -1,10 +1,22 @@
 
 public class Variable 
 {
-	private Variable varStmt;
+	private String varName;
+	private int numValue;
 	
-	public Variable(Variable varName, int intValue)
+	public Variable(String varName, int numValue)
 	{
-		this.varStmt = varStmt;
+		this.varName = varName;
+		this.numValue = numValue;
 	}
+
+	public String getVarName() {
+		return varName;
+	}
+
+	public int getNumValue() {
+		return numValue;
+	}
+	
+	
 }

@@ -7,10 +7,11 @@ public class Parser
 	private static final String legalSymbolCharacters = Parser.legalVariableCharacters + Parser.legalLiteralCharacter;
 	private static final String legalOpCharacters = "+-*/% ";
 	private VarDefStatement theSytaxTree;
+	private VariableEnvi env = new VariableEnvi();
 	
 	public Parser(String theStmt)
 	{
-		this.theStmt = theStmt;
+		this.theStmt = theStmt.trim();
 		this.theSytaxTree = null;
 		this.pos = 0;
 	}
@@ -21,7 +22,15 @@ public class Parser
 
 	void parse()
 	{
-		this.theSytaxTree = this.parse_stmt();
+		while(this.pos < this.theStmt.length())
+		{
+			this.theSytaxTree = this.parse_stmt();
+			if(this.theSytaxTree.isSpecialMathExpr())
+			{
+				//I have a variable to add to my env
+				env.addVariable(new Variable(this.theSytaxTree.getTheVarExpr().getVarName(), ((LitExpression)this.theSytaxTree.getTheMathExpr().getLeftOperand()).getTheLiteral()));
+			}
+		}
 	}
 	
 	private String getNextToken(char c)
@@ -73,7 +82,7 @@ public class Parser
 		
 		// Reading: Math-Expr
 		MathExpression theME = this.parse_math_expr();
-		System.out.println("The Right Side Math is: " + theME.doMath());
+		System.out.println("The Right Side Math is: " + theME.doMath(env));
 		
 		//burn past the ;
 		this.getNextToken(';');
@@ -124,7 +133,13 @@ public class Parser
 				leftOperand = new LitExpression(Integer.parseInt(symbol));
 			}
 		}
+		
 		String op = this.getNextToken(Parser.legalOpCharacters);
+		if(op.length() == 0)
+		{
+			//we have a literal math-expr
+			return new MathExpression(leftOperand, null, null);
+		}
 		System.out.println("Read Op: " + op);
 		theOpExpression = new OpExpression(op.charAt(0));
 		
